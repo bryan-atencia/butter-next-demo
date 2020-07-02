@@ -1,13 +1,14 @@
 import React from "react"
 import regeneratorRuntime from "regenerator-runtime";
+import { Grid, Typography, withStyles } from "@material-ui/core"
 
 import Head from 'next/head'
 import Link from 'next/link'
+
 import Layout from '../../../components/layout.js'
 
-import getSubcategories from "../../../public/admin/functions/getSubcategories.js"
+import { getSubcategories } from "../../../functions"
 
-import { Grid, Typography, withStyles } from "@material-ui/core"
 
 @withStyles( (theme) => ({
   image: {
@@ -66,14 +67,14 @@ export default class Subcategory extends React.Component {
             {
               subcategoryData && <>
                                   <Grid style={{ maxWidth:"900px" }}>
-                                      <Typography variant="h2">{ subcategoryData.pageTitle }</Typography>
-                                      <Typography variant="h6">{ subcategoryData.pageDescription }</Typography>
+                                      <Typography variant="h2">{ subcategoryData.pagetitle }</Typography>
+                                      <Typography variant="h6">{ subcategoryData.pagedescription }</Typography>
                                       <Grid container>
-                                        <Typography className={ classes.tileActionText }>{ subcategoryData.pageActionLink }</Typography>
+                                        <Typography className={ classes.tileActionText }>{ subcategoryData.pageactionlink }</Typography>
                                         <Link href="/">
                                           <Typography variant="body1" className={ classes.tileActionText }>HOME</Typography>
                                         </Link>
-                                        <Link href={subcategoryData.category ? `/category/${subcategoryData.category.split(" ").join("")}` : "/"}>
+                                        <Link href={subcategoryData.category ? `/category/${subcategoryData.category.id}` : "/"}>
                                           <Typography variant="body1" className={ classes.tileActionText }>BACK TO CATEGORY</Typography>
                                         </Link>
                                       </Grid>
@@ -87,13 +88,13 @@ export default class Subcategory extends React.Component {
 }
 
 export async function getStaticPaths() {
+  let paths = await getSubcategories()
 
-  let paths = getSubcategories()
   paths = paths.map(x => {
     return {
       params: {
-        category: x.category.split(" ").join(""),
-        id: x.title.split(" ").join(""),
+        id: x.id,
+        category: x.category.id
       }
     }
   })
@@ -105,9 +106,12 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }) {
+  let data = await getSubcategories()
+  let subcategory = data.filter(x => x.id == params.id)[0]
+
   return {
     props: {
-      subcategoryData: getSubcategories().filter(x => x.title.split(" ").join("") == params.id)[0]
+      subcategoryData: subcategory
     }
   }
 }

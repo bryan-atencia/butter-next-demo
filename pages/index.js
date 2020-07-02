@@ -1,14 +1,12 @@
 import React from "react"
 import regeneratorRuntime from "regenerator-runtime";
-
-import Butter from 'buttercms';
-const butter = Butter('your_api_token');
+import { Grid, Typography, withStyles } from "@material-ui/core"
 
 import Head from 'next/head'
 import Link from 'next/link'
-import Layout from '../components/layout.js'
 
-import { Grid, Typography, withStyles } from "@material-ui/core"
+import { getCategories } from "../functions"
+import Layout from '../components/layout.js'
 
 @withStyles((theme) => ({
   image: {
@@ -39,15 +37,14 @@ import { Grid, Typography, withStyles } from "@material-ui/core"
 export default class Main extends React.Component {
 
   renderCategories = () => {
-
-    const { data, classes } = this.props
+    const { categories, classes } = this.props
 
     return <Grid container justify="space-between" alignItems="center">
             {
-                data && data.map((x, y) => {
+                categories && categories.map((x, y) => {
                   return <Grid item key={ y }>
                             <Grid className={ classes.image }></Grid>
-                             <Link href={`/category/${x.name.split(" ").join("")}`}>
+                             <Link href={`/category/${x.id}`}>
                                 <Typography className={ classes.actionText }>{ x.name }</Typography>
                               </Link>
                             </Grid>
@@ -57,23 +54,24 @@ export default class Main extends React.Component {
   }
 
   render() {
-    const { data, classes } = this.props
+    const { categories, classes } = this.props
 
     return <Layout>
-              {/* <Grid className={ classes.mainGrid }>
+              <Grid className={ classes.mainGrid }>
                 <Typography variant="h2" gutterBottom>The Bartender</Typography>
                 <Typography variant="h6">Your complete guide to men’s apparel and accessories. Browse style tips, size guides, and steps to master tying a necktie, tying a bow tie, folding a pocket square, and more.</Typography>
               </Grid>
-              {this.renderCategories()} */}
+              { this.renderCategories() }
             </Layout>
   }
 }
 
 export async function getStaticProps() {
+
   return {
     props: {
       fallback: false,
-      data: []
+      categories: await getCategories()
     }
   }
 }
