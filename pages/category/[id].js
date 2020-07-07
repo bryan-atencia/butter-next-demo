@@ -7,7 +7,7 @@ import Link from 'next/link'
 
 import Layout from '../../components/layout.js'
 
-import { getCategories, getSubcategories } from "../../functions"
+import { getCategories, getSubcategories, getCategory } from "../../functions"
 
 
 @withStyles((theme) => ({
@@ -126,8 +126,7 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }) {
-  let data = await getCategories()
-  let category = data.filter(x => x.id == params.id)[0];
+  let category = await getCategory(params.id)
 
   return {
     props: {

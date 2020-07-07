@@ -67,7 +67,6 @@ export default class Main extends React.Component {
 }
 
 export async function getStaticProps() {
-
   return {
     props: {
       fallback: false,
